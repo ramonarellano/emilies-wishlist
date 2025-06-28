@@ -1,22 +1,26 @@
-# Python Streamlit App
+# 💖 Emilies Ønskeliste
 
-A multi-page Streamlit application with interactive features, data analysis capabilities, and visualization tools.
+En hyggelig og sikker ønskeliste-app for Emilie, hvor hun kan administrere sine ønsker og familie kan se hva hun ønsker seg.
 
-## Features
+## Funksjoner
 
-- **Home Page**: Interactive widgets and basic statistics
-- **Data Analysis**: CSV file upload and analysis with visualizations
-- **Interactive Charts**: Dynamic chart generation with customizable parameters
-- **About Page**: Information about the app and technologies used
+- **Emilies grensesnitt**: Legg til og fjern ønsker med navn, beskrivelse og lenke
+- **Familie grensesnitt**: Se ønskelisten, marker ting som kjøpt og legg til hvem som kjøpte det
+- **Sikker innlogging**: Passord-basert autentisering for to brukertyper
+- **Pen design**: Rosa, koselig tema som passer for en 13-åring
+- **Statistikk**: Oversikt over kjøpte og ikke-kjøpte ønsker
 
-## Technologies Used
+## Brukere
+
+- **Emilie** (`princess123`): Kan legge til/fjerne ønsker, men ikke se kjøpsstatus
+- **Familie** (`family456`): Kan se alle ønsker og markere dem som kjøpt
+
+## Teknologier
 
 - Python 3.x
 - Streamlit - Web app framework
-- Pandas - Data manipulation and analysis
-- NumPy - Numerical computing
-- Matplotlib - Plotting library
-- Seaborn - Statistical data visualization
+- Pandas - Data manipulation
+- UUID - Unique identifiers
 
 ## Installation
 
@@ -44,30 +48,28 @@ The app will open in your default web browser at `http://localhost:8501`
 └── README.md          # This file
 ```
 
-## Usage
+## Bruk
 
-1. **Home Page**: 
-   - Enter your name and select preferences
-   - View real-time generated statistics and charts
+1. **Som Emilie**: 
+   - Logg inn med passord `princess123`
+   - Legg til nye ønsker med navn, beskrivelse og lenke
+   - Fjern ønsker du ikke lenger vil ha
+   - Se oversikt over alle dine ønsker
 
-2. **Data Analysis**: 
-   - Upload your own CSV file for analysis
-   - View data preview and statistical summary
-   - Generate histograms for numeric columns
+2. **Som familie**: 
+   - Logg inn med passord `family456`
+   - Se alle Emilies ønsker med statistikk
+   - Marker ønsker som kjøpt og legg til ditt navn
+   - Se hvem som har kjøpt hva og når
 
-3. **Interactive Charts**: 
-   - Choose from different chart types
-   - Adjust the number of data points
-   - View dynamically generated visualizations
+## Tilpasning
 
-## Customization
-
-You can easily extend this app by:
-- Adding new pages to the sidebar navigation
-- Implementing additional chart types
-- Adding more data analysis features
-- Integrating with external APIs
-- Adding user authentication
+Du kan lett utvide denne appen ved å:
+- Legge til flere brukere eller brukertyper
+- Implementere database lagring (f.eks. SQLite eller Firebase)
+- Legge til e-post notifikasjoner når noe kjøpes
+- Integrere med nettbutikker for prissjekk
+- Legge til kategorisering av ønsker
 
 ## Contributing
 
