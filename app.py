@@ -46,11 +46,15 @@ if 'authenticated' not in st.session_state:
 if 'user_type' not in st.session_state:
     st.session_state.user_type = None
 
-# Hardcoded passwords
-USERS = {
-    'emilie': {'password': 'princess123', 'type': 'emilie'},
-    'family': {'password': 'family456', 'type': 'family'}
-}
+# Load passwords from Streamlit secrets
+try:
+    USERS = {
+        'emilie': {'password': st.secrets["EMILIE_PASSWORD"], 'type': 'emilie'},
+        'family': {'password': st.secrets["FAMILY_PASSWORD"], 'type': 'family'}
+    }
+except KeyError as e:
+    st.error(f"Missing secret: {e}. Please configure secrets in Streamlit Cloud.")
+    st.stop()
 
 # Custom CSS for pink, cozy theme
 st.markdown("""
@@ -146,9 +150,9 @@ def login():
             st.error("Feil passord 😞")
         
         st.markdown("---")
-        st.markdown("**Hint:**")
-        st.markdown("• Passord: `princess123` (for Emilie)")
-        st.markdown("• Passord: `family456` (for familie)")
+        st.markdown("**Info:**")
+        st.markdown("• Spør Ramon om passord hvis du ikke har det")
+        st.markdown("• Emilie og familie har ulike passord")
 
 def logout():
     if st.sidebar.button("Logg ut"):
