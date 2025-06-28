@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 import uuid
+import json
+import os
 
 # Set page config
 st.set_page_config(
@@ -11,9 +13,32 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
+# Data persistence functions
+DATA_FILE = 'wishlist_data.json'
+
+def load_data():
+    """Load wishlist data from JSON file"""
+    try:
+        if os.path.exists(DATA_FILE):
+            with open(DATA_FILE, 'r', encoding='utf-8') as f:
+                return json.load(f)
+    except Exception as e:
+        st.error(f"Feil ved lasting av data: {e}")
+    return []
+
+def save_data(data):
+    """Save wishlist data to JSON file"""
+    try:
+        with open(DATA_FILE, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+        return True
+    except Exception as e:
+        st.error(f"Feil ved lagring av data: {e}")
+        return False
+
 # Initialize session state
 if 'wishlist_items' not in st.session_state:
-    st.session_state.wishlist_items = []
+    st.session_state.wishlist_items = load_data()
     
 if 'authenticated' not in st.session_state:
     st.session_state.authenticated = False
@@ -161,7 +186,10 @@ else:
             if submit and name.strip():
                 new_item = WishlistItem(name.strip(), description.strip(), url.strip())
                 st.session_state.wishlist_items.append(new_item.to_dict())
-                st.success(f"🎉 '{name}' ble lagt til på ønskelisten!")
+                if save_data(st.session_state.wishlist_items):
+                    st.success(f"🎉 '{name}' ble lagt til på ønskelisten!")
+                else:
+                    st.error("Feil ved lagring av ønsket")
                 st.rerun()
             elif submit and not name.strip():
                 st.error("Du må skrive navnet på ønsket ditt! 😊")
@@ -218,7 +246,10 @@ else:
                             it for it in st.session_state.wishlist_items 
                             if it['id'] != item['id']
                         ]
-                        st.success(f"'{item['name']}' ble fjernet fra ønskelisten!")
+                        if save_data(st.session_state.wishlist_items):
+                            st.success(f"'{item['name']}' ble fjernet fra ønskelisten!")
+                        else:
+                            st.error("Feil ved lagring")
                         st.rerun()
                 
                 # Add a subtle divider between rows
@@ -323,9 +354,12 @@ else:
                                             wishlist_item['purchase_date'] = datetime.now().strftime("%Y-%m-%d")
                                             break
                                     
-                                    # Clean up session state
-                                    del st.session_state[f"buying_{item['id']}"]
-                                    st.success(f"🎉 '{item['name']}' markert som kjøpt av {buyer_name}!")
+                                    # Save data and clean up session state
+                                    if save_data(st.session_state.wishlist_items):
+                                        del st.session_state[f"buying_{item['id']}"]
+                                        st.success(f"🎉 '{item['name']}' markert som kjøpt av {buyer_name}!")
+                                    else:
+                                        st.error("Feil ved lagring")
                                     st.rerun()
                                 else:
                                     st.error("Skriv navnet ditt først!")
