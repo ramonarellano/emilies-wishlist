@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 import uuid
-import json
+import sqlite3
 import os
 
 # Set page config
@@ -13,24 +13,92 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Data persistence functions
-DATA_FILE = 'wishlist_data.json'
+# Database persistence functions
+DB_FILE = 'wishlist.db'
+
+def init_database():
+    """Initialize SQLite database with wishlist table"""
+    try:
+        conn = sqlite3.connect(DB_FILE)
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS wishlist (
+                id TEXT PRIMARY KEY,
+                name TEXT NOT NULL,
+                description TEXT,
+                url TEXT,
+                is_bought BOOLEAN DEFAULT FALSE,
+                bought_by TEXT,
+                date_added TEXT,
+                purchase_date TEXT
+            )
+        ''')
+        
+        conn.commit()
+        conn.close()
+        return True
+    except Exception as e:
+        st.error(f"Feil ved opprettelse av database: {e}")
+        return False
 
 def load_data():
-    """Load wishlist data from JSON file"""
+    """Load wishlist data from SQLite database"""
     try:
-        if os.path.exists(DATA_FILE):
-            with open(DATA_FILE, 'r', encoding='utf-8') as f:
-                return json.load(f)
+        init_database()
+        conn = sqlite3.connect(DB_FILE)
+        cursor = conn.cursor()
+        
+        cursor.execute('SELECT * FROM wishlist ORDER BY date_added DESC')
+        rows = cursor.fetchall()
+        
+        data = []
+        for row in rows:
+            data.append({
+                'id': row[0],
+                'name': row[1],
+                'description': row[2],
+                'url': row[3],
+                'is_bought': bool(row[4]),
+                'bought_by': row[5],
+                'date_added': row[6],
+                'purchase_date': row[7]
+            })
+        
+        conn.close()
+        return data
     except Exception as e:
         st.error(f"Feil ved lasting av data: {e}")
-    return []
+        return []
 
 def save_data(data):
-    """Save wishlist data to JSON file"""
+    """Save wishlist data to SQLite database"""
     try:
-        with open(DATA_FILE, 'w', encoding='utf-8') as f:
-            json.dump(data, f, ensure_ascii=False, indent=2)
+        init_database()
+        conn = sqlite3.connect(DB_FILE)
+        cursor = conn.cursor()
+        
+        # Clear existing data and insert new data
+        cursor.execute('DELETE FROM wishlist')
+        
+        for item in data:
+            cursor.execute('''
+                INSERT INTO wishlist 
+                (id, name, description, url, is_bought, bought_by, date_added, purchase_date)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (
+                item['id'],
+                item['name'],
+                item['description'],
+                item['url'],
+                item['is_bought'],
+                item['bought_by'],
+                item['date_added'],
+                item.get('purchase_date')
+            ))
+        
+        conn.commit()
+        conn.close()
         return True
     except Exception as e:
         st.error(f"Feil ved lagring av data: {e}")
