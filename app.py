@@ -101,6 +101,16 @@ st.markdown("""
         background: white;
         border-radius: 10px;
     }
+    .header-row {
+        background: rgba(0, 0, 0, 0.1) !important;
+        padding: 0.8rem !important;
+        border-radius: 10px !important;
+        margin-bottom: 0.5rem !important;
+        font-weight: bold !important;
+    }
+    .header-row .stMarkdown {
+        background: transparent !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -137,17 +147,20 @@ def login():
     
     with col2:
         st.markdown("### 🔐 Logg inn")
-        password = st.text_input("🔑 Passord", type="password")
         
-        if st.button("Logg inn", key="login_btn"):
-            for user, info in USERS.items():
-                if info['password'] == password:
-                    st.session_state.authenticated = True
-                    st.session_state.user_type = info['type']
-                    st.success(f"Velkommen! 🎉")
-                    st.rerun()
-                    return
-            st.error("Feil passord 😞")
+        with st.form(key='login_form'):
+            password = st.text_input("🔑 Passord", type="password")
+            login_submitted = st.form_submit_button("Logg inn")
+            
+            if login_submitted:
+                for user, info in USERS.items():
+                    if info['password'] == password:
+                        st.session_state.authenticated = True
+                        st.session_state.user_type = info['type']
+                        st.success(f"Velkommen! 🎉")
+                        st.rerun()
+                        return
+                st.error("Feil passord 😞")
         
         st.markdown("---")
         st.markdown("**Info:**")
@@ -197,18 +210,17 @@ else:
                 st.rerun()
             elif submit and not name.strip():
                 st.error("Du må skrive navnet på ønsket ditt! 😊")
-        
-        st.markdown("---")
-        
+
         # Display current wishlist items
         st.subheader(f"💖 Dine ønsker ({len(st.session_state.wishlist_items)})")
-        
+
         if not st.session_state.wishlist_items:
             st.info("Ingen ønsker lagt til enda. Legg til ditt første ønske ovenfor! 🌟")
         else:
             st.markdown('<div class="wishlist-table">', unsafe_allow_html=True)
             
-            # Add column headers
+            # Add column headers with darker background
+            st.markdown('<div style="background: rgba(0, 0, 0, 0.1); padding: 0.8rem; border-radius: 10px; margin-bottom: 0.5rem;">', unsafe_allow_html=True)
             header_cols = st.columns([3, 2, 1.5, 1, 0.8])
             with header_cols[0]:
                 st.markdown("**🎁 Ønske**")
@@ -220,8 +232,7 @@ else:
                 st.markdown("**📅 Dato**")
             with header_cols[4]:
                 st.markdown("**🗑️**")
-            
-            st.markdown("<hr style='margin: 1rem 0; border: 2px solid rgba(0,0,0,0.2);'>", unsafe_allow_html=True)
+            st.markdown('</div>', unsafe_allow_html=True)
             
             # Create table with buttons for each row
             for i, item in enumerate(st.session_state.wishlist_items):
@@ -288,7 +299,8 @@ else:
             # Display items in table format
             st.markdown('<div class="wishlist-table">', unsafe_allow_html=True)
             
-            # Add column headers
+            # Add column headers with darker background
+            st.markdown('<div style="background: rgba(0, 0, 0, 0.1); padding: 0.8rem; border-radius: 10px; margin-bottom: 0.5rem;">', unsafe_allow_html=True)
             header_cols = st.columns([2.5, 1.5, 1.5, 1, 1, 1.5])
             with header_cols[0]:
                 st.markdown("**🎁 Ønske**")
@@ -302,8 +314,7 @@ else:
                 st.markdown("**✅ Status**")
             with header_cols[5]:
                 st.markdown("**👤 Kjøpt av**")
-            
-            st.markdown("<hr style='margin: 1rem 0; border: 2px solid rgba(0,0,0,0.2);'>", unsafe_allow_html=True)
+            st.markdown('</div>', unsafe_allow_html=True)
             
             # Display each item
             for i, item in enumerate(st.session_state.wishlist_items):

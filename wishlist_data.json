@@ -1,0 +1,21 @@
+[
+  {
+    "id": "d8b96959-b876-4e34-88f2-57245c7b806a",
+    "name": "tsdfdsf",
+    "description": "sdfdsf",
+    "url": "dsfdsf",
+    "is_bought": true,
+    "bought_by": "test",
+    "date_added": "2025-06-29",
+    "purchase_date": "2025-06-29"
+  },
+  {
+    "id": "d02b64e8-b3a2-439a-90ab-88d13afb7e84",
+    "name": "test",
+    "description": "testet",
+    "url": "setrewr",
+    "is_bought": false,
+    "bought_by": null,
+    "date_added": "2025-06-29"
+  }
+]
